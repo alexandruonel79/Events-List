@@ -32,11 +32,13 @@ public class Event {
     private String eventName;
     private String description;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL,
+                optional = false)
     @JoinColumn(name = "location_id") // specificați coloana cheii străine în tabelul evenimentului
     private Location location;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL,
+                optional = false)
     @JoinColumn(name = "organizer_id") // specificați coloana cheii străine în tabelul evenimentului
     private Organizer organizer;
 
@@ -50,4 +52,17 @@ public class Event {
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private List<Review> reviews;
+
+    public void addParticipant(Participant participant) {
+        participants.add(participant);
+        participant.getEvents().add(this);
+    }
+
+    public void removeParticipant(Participant participant) {
+        participants.remove(participant);
+    }
+
+    public void updateParticipant(Participant participant) {
+        participants.set(participants.indexOf(participant), participant);
+    }
 }
