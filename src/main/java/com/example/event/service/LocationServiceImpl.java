@@ -41,4 +41,9 @@ public class LocationServiceImpl implements LocationService{
     public List<Location> getAllLocations() {
         return locationRepository.findAll();
     }
+
+    @Override
+    public Boolean checkLocationExists(String locationName) {
+        return locationRepository.existsByName(locationName);
+    }
 }

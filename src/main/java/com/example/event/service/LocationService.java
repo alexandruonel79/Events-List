@@ -10,4 +10,6 @@ public interface LocationService {
     public Location updateLocation(Location location);
     public Location getLocation(Long id);
     public List<Location> getAllLocations();
+
+    Boolean checkLocationExists(String locationName);
 }

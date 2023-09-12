@@ -5,6 +5,7 @@ import com.example.event.entity.Location;
 import com.example.event.entity.Organizer;
 import com.example.event.entity.Participant;
 import com.example.event.repository.EventRepository;
+import com.example.event.repository.ParticipantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,19 +14,25 @@ import java.util.List;
 @Service
 public class EventServiceImpl implements EventService{
     private final EventRepository eventRepository;
-    private final LocationService locationService;
-    private final OrganizerService organizerService;
-    private final ParticipantService participantService;
+    private final ParticipantRepository participantRepository;
+    private  LocationService locationService;
+    private  OrganizerService organizerService;
 
     @Autowired
-    public EventServiceImpl(EventRepository eventRepository,LocationService locationService,
-                            OrganizerService organizerService, ParticipantService participantService) {
+    public EventServiceImpl(EventRepository eventRepository, ParticipantRepository participantRepository) {
         this.eventRepository = eventRepository;
-        this.locationService = locationService;
-        this.organizerService = organizerService;
-        this.participantService = participantService;
+        this.participantRepository = participantRepository;
     }
 
+    /// inject dependencies
+    @Autowired
+    public void setLocationService(LocationService locationService) {
+        this.locationService = locationService;
+    }
+    @Autowired
+    public void setOrganizerService(OrganizerService organizerService) {
+        this.organizerService = organizerService;
+    }
 
     @Override
     public Event addEvent(Event event, Long locationId, Long organizerId) {
@@ -61,11 +68,6 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public Event updateEventParticipants(Event event, List<Long> participantIds) {
-        return null;
-    }
-
-    @Override
     public Event getEvent(Long id) {
         return eventRepository.findById(id).get();
     }
@@ -76,33 +78,35 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public void addParticipant(Long idEvent, Long idParticipant) {
+    public void addParticipant(Long idEvent, Participant participant) {
 
         Event event= eventRepository.findById(idEvent).get();
-        Participant participant= participantService.getParticipant(idParticipant,idEvent);
 
         event.addParticipant(participant);
 
+        participantRepository.save(participant);
         eventRepository.save(event);
     }
 
     @Override
-    public void deleteParticipant(Long idEvent, Long idParticipant) {
+    public void deleteEventParticipant(Long idEvent, Long idParticipant) {
         Event event= eventRepository.findById(idEvent).get();
-        Participant participant= participantService.getParticipant(idParticipant,idEvent);
+        Participant participant= participantRepository.findById(idParticipant).get();
 
         event.removeParticipant(participant);
 
+        participantRepository.deleteById(idParticipant);
         eventRepository.save(event);
     }
 
     @Override
-    public void updateParticipant(Long idEvent, Long id) {
+    public void updateEventParticipant(Long idEvent, Long id) {
         Event event= eventRepository.findById(idEvent).get();
-        Participant participant= participantService.getParticipant(id,idEvent);
+        Participant participant= participantRepository.findById(id).get();
 
         event.updateParticipant(participant);
 
+        participantRepository.save(participant);
         eventRepository.save(event);
     }
 }
