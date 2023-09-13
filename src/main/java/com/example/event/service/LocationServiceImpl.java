@@ -34,6 +34,7 @@ public class LocationServiceImpl implements LocationService{
 
     @Override
     public Location getLocation(Long id) {
+        System.out.println("LocationServiceImpl: getLocation: id= " + id);
         return locationRepository.findById(id).get();
     }
 

@@ -65,4 +65,29 @@ public class Event {
     public void updateParticipant(Participant participant) {
         participants.set(participants.indexOf(participant), participant);
     }
+
+    public void addReview(Review review) {
+        reviews.add(review);
+        review.setEvent(this);
+    }
+
+    public void removeReview(Review review) {
+        reviews.remove(review);
+    }
+
+    public Participant getParticipant(Long idParticipant) {
+      return participants.stream()
+                   .filter(participant -> participant.getId().equals(idParticipant))
+                   .findFirst()
+               /// trebuie modificata eroarea
+                   .orElseThrow(() -> new RuntimeException("Participant not found"));
+    }
+
+    public Review getReview(Long idReview) {
+        return reviews.stream()
+                .filter(review -> review.getId().equals(idReview))
+                .findFirst()
+                /// trebuie modificata eroarea
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+    }
 }
