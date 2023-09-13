@@ -1,11 +1,14 @@
 package com.example.event.entity;
 
+import com.example.event.error.ParticipantDoesNotExistException;
+import com.example.event.error.ReviewDoesNotExistException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -48,10 +51,10 @@ public class Event {
             joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "participant_id")
     )
-    private List<Participant> participants;
+    private List<Participant> participants=new ArrayList<>();
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
-    private List<Review> reviews;
+    private List<Review> reviews=new ArrayList<>();
 
     public void addParticipant(Participant participant) {
         participants.add(participant);
@@ -75,19 +78,19 @@ public class Event {
         reviews.remove(review);
     }
 
-    public Participant getParticipant(Long idParticipant) {
+    public Participant getParticipant(Long idParticipant) throws ParticipantDoesNotExistException {
       return participants.stream()
                    .filter(participant -> participant.getId().equals(idParticipant))
                    .findFirst()
                /// trebuie modificata eroarea
-                   .orElseThrow(() -> new RuntimeException("Participant not found"));
+                   .orElseThrow(() -> new ParticipantDoesNotExistException("Participant not found"));
     }
 
-    public Review getReview(Long idReview) {
+    public Review getReview(Long idReview) throws ReviewDoesNotExistException {
         return reviews.stream()
                 .filter(review -> review.getId().equals(idReview))
                 .findFirst()
                 /// trebuie modificata eroarea
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new ReviewDoesNotExistException("Review not found"));
     }
 }

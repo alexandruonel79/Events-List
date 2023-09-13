@@ -1,6 +1,8 @@
 package com.example.event.controller;
 
 import com.example.event.entity.Location;
+import com.example.event.error.EventLocationException;
+import com.example.event.error.LocationDoesNotExistException;
 import com.example.event.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,18 +37,14 @@ public class LocationController {
     }
 
     @DeleteMapping("/deleteLocation/{id}")
-    public void deleteLocation(@PathVariable Long id) {
+    public void deleteLocation(@PathVariable Long id) throws LocationDoesNotExistException {
         locationService.deleteLocation(id);
     }
 
     @PutMapping("/updateLocation/{id}")
-    public void updateLocation(@RequestBody Location location, @PathVariable Long id) {
+    public void updateLocation(@RequestBody Location location, @PathVariable Long id)
+            throws LocationDoesNotExistException {
 
-        if(locationService.getLocation(id) == null) {
-            System.out.println("Location does not exist");
-            return;
-        }
-
-        locationService.updateLocation(location);
+        locationService.updateLocation(location,id);
     }
 }

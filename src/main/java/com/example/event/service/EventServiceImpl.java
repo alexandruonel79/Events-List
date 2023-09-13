@@ -1,6 +1,7 @@
 package com.example.event.service;
 
 import com.example.event.entity.*;
+import com.example.event.error.*;
 import com.example.event.repository.EventRepository;
 import com.example.event.repository.ParticipantRepository;
 import com.example.event.repository.ReviewRepository;
@@ -19,7 +20,8 @@ public class EventServiceImpl implements EventService{
     private  OrganizerService organizerService;
 
     @Autowired
-    public EventServiceImpl(EventRepository eventRepository, ParticipantRepository participantRepository, ReviewRepository reviewRepository) {
+    public EventServiceImpl(EventRepository eventRepository, ParticipantRepository participantRepository,
+                            ReviewRepository reviewRepository) {
         this.eventRepository = eventRepository;
         this.participantRepository = participantRepository;
         this.reviewRepository = reviewRepository;
@@ -36,8 +38,9 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public Event addEvent(Event event, Long locationId, Long organizerId) {
-        System.out.println("EventServiceImpl: addEvent: locationId= " + locationId + ", organizerId= " + organizerId);
+    public Event addEvent(Event event, Long locationId, Long organizerId) throws EventLocationException,
+            EventOrganizerException {
+
         Location location= locationService.getLocation(locationId);
         Organizer organizer= organizerService.getOrganizer(organizerId);
 
@@ -48,12 +51,17 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public void deleteEvent(Long id) {
+    public void deleteEvent(Long id) throws EventDoesNotExistException {
+
+        if(eventRepository.findById(id).isEmpty()){
+            throw new EventDoesNotExistException("Event does not exist");
+        }
+
         eventRepository.deleteById(id);
     }
 
     @Override
-    public Event updateEventLocation(Event event, Long locationId){
+    public Event updateEventLocation(Event event, Long locationId) throws EventLocationException {
         Location newLocation= locationService.getLocation(locationId);
         event.setLocation(newLocation);
 
@@ -61,7 +69,7 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public Event updateEventOrganizer(Event event, Long organizerId) {
+    public Event updateEventOrganizer(Event event, Long organizerId) throws EventOrganizerException {
 
         Organizer newOrganizer= organizerService.getOrganizer(organizerId);
         event.setOrganizer(newOrganizer);
@@ -70,7 +78,11 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public Event getEvent(Long id) {
+    public Event getEvent(Long id) throws EventDoesNotExistException {
+        if(eventRepository.findById(id).isEmpty())
+        {
+            throw new EventDoesNotExistException("Event does not exist");
+        }
         return eventRepository.findById(id).get();
     }
 
@@ -80,7 +92,11 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public void addParticipant(Long idEvent, Participant participant) {
+    public void addParticipant(Long idEvent, Participant participant) throws EventDoesNotExistException {
+
+        if(eventRepository.findById(idEvent).isEmpty()){
+            throw new EventDoesNotExistException("Event does not exist");
+        }
 
         Event event= eventRepository.findById(idEvent).get();
 
@@ -91,8 +107,19 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public void deleteEventParticipant(Long idEvent, Long idParticipant) {
+    public void deleteEventParticipant(Long idEvent, Long idParticipant)
+            throws EventDoesNotExistException, ParticipantDoesNotExistException {
+
+        if(participantRepository.findById(idParticipant).isEmpty()){
+            throw new ParticipantDoesNotExistException("Participant does not exist");
+        }
+
+        if(eventRepository.findById(idEvent).isEmpty()){
+            throw new EventDoesNotExistException("Event does not exist");
+        }
+
         Event event= eventRepository.findById(idEvent).get();
+
         Participant participant= participantRepository.findById(idParticipant).get();
 
         event.removeParticipant(participant);
@@ -102,7 +129,17 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public void updateEventParticipant(Long idEvent, Long id, Participant participant) {
+    public void updateEventParticipant(Long idEvent, Long idParticipant, Participant participant)
+            throws ParticipantDoesNotExistException, EventDoesNotExistException {
+
+        if(participantRepository.findById(idParticipant).isEmpty()){
+            throw new ParticipantDoesNotExistException("Participant does not exist");
+        }
+
+        if(eventRepository.findById(idEvent).isEmpty()){
+            throw new EventDoesNotExistException("Event does not exist");
+        }
+
         Event event= eventRepository.findById(idEvent).get();
 
         event.updateParticipant(participant);
@@ -112,19 +149,44 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public void addReview(Long idEvent, Long idParticipant, Review review) {
+    public void addReview(Long idEvent, Long idParticipant, Review review) throws EventDoesNotExistException {
+
+        if(eventRepository.findById(idEvent).isEmpty()){
+            throw new EventDoesNotExistException("Event does not exist");
+        }
+
         eventRepository.findById(idEvent).get().addReview(review);
         reviewRepository.save(review);
     }
 
     @Override
-    public void deleteEventReview(Long idEvent, Long idReview) {
+    public void deleteEventReview(Long idEvent, Long idReview)
+            throws EventDoesNotExistException, ReviewDoesNotExistException {
+
+        if(reviewRepository.findById(idReview).isEmpty()){
+            throw new ReviewDoesNotExistException("Review does not exist");
+        }
+
+        if(eventRepository.findById(idEvent).isEmpty()){
+            throw new EventDoesNotExistException("Event does not exist");
+        }
+
         eventRepository.findById(idEvent).get().removeReview(reviewRepository.findById(idReview).get());
         reviewRepository.deleteById(idReview);
     }
 
     @Override
-    public void updateEventReview(Long idEvent, Long idReview, Review review) {
+    public void updateEventReview(Long idEvent, Long idReview, Review review)
+            throws ReviewDoesNotExistException, EventDoesNotExistException {
+
+        if(reviewRepository.findById(idReview).isEmpty()){
+            throw new ReviewDoesNotExistException("Review does not exist");
+        }
+
+        if(eventRepository.findById(idEvent).isEmpty()){
+            throw new EventDoesNotExistException("Event does not exist");
+        }
+
         Event event= eventRepository.findById(idEvent).get();
         Review oldReview= reviewRepository.findById(idReview).get();
 
@@ -138,5 +200,15 @@ public class EventServiceImpl implements EventService{
     @Override
     public List<Review> getAllReviews(Long idEvent) {
         return eventRepository.findById(idEvent).get().getReviews();
+    }
+
+    @Override
+    public List<Participant> getAllParticipants(Long idEvent) throws EventDoesNotExistException {
+
+        if(eventRepository.findById(idEvent).isEmpty()){
+            throw new EventDoesNotExistException("Event does not exist");
+        }
+
+        return eventRepository.findById(idEvent).get().getParticipants();
     }
 }

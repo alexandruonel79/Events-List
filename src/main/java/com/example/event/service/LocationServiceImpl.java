@@ -1,6 +1,8 @@
 package com.example.event.service;
 
 import com.example.event.entity.Location;
+import com.example.event.error.EventLocationException;
+import com.example.event.error.LocationDoesNotExistException;
 import com.example.event.repository.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,18 +25,39 @@ public class LocationServiceImpl implements LocationService{
     }
 
     @Override
-    public void deleteLocation(Long id) {
+    public void deleteLocation(Long id) throws LocationDoesNotExistException {
+
+        if(locationRepository.findById(id).isEmpty()){
+            throw new LocationDoesNotExistException("Location does not exist");
+        }
+
         locationRepository.deleteById(id);
     }
 
     @Override
-    public Location updateLocation(Location location) {
-        return locationRepository.save(location);
+    public Location updateLocation(Location location, Long id) throws LocationDoesNotExistException {
+
+        if(locationRepository.findById(id).isEmpty()){
+            throw new LocationDoesNotExistException("Location does not exist");
+        }
+
+        Location previousLocation = locationRepository.findById(id).get();
+        previousLocation.setName(location.getName());
+        previousLocation.setAddress(location.getAddress());
+        previousLocation.setCity(location.getCity());
+        previousLocation.setCountry(location.getCountry());
+        previousLocation.setPostalCode(location.getPostalCode());
+
+        return locationRepository.save(previousLocation);
     }
 
     @Override
-    public Location getLocation(Long id) {
-        System.out.println("LocationServiceImpl: getLocation: id= " + id);
+    public Location getLocation(Long id) throws EventLocationException {
+
+        if(locationRepository.findById(id).isEmpty()){
+            throw new EventLocationException("Location does not exist");
+        }
+
         return locationRepository.findById(id).get();
     }
 
