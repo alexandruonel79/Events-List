@@ -39,7 +39,10 @@
             <tbody>
                 <tr th:each="event : ${events}">
                     <td th:text="${event.getId()}">Event ID</td>
-                    <td th:text="${event.getEventName()}">Event Name</td>
+                    <td>
+                        <a th:href="@{/getEvent/{eventId}(eventId=${event.getId()})}"
+                           th:text="${event.getEventName()}">Event Name</a>
+                    </td>
                     <td>
                         <a th:href="@{/getOrganizer/{organizerId}(organizerId=${event.getOrganizer().getId()})}"
                            th:text="${event.getOrganizer().getName()}">Event Organizer</a>

@@ -47,8 +47,11 @@ public class EventController {
     }
 
     @GetMapping("/getEvent/{id}")
-    public Event getEvent(@PathVariable Long id) throws EventDoesNotExistException {
-       return eventService.getEvent(id);
+    public ModelAndView getEvent(@PathVariable Long id) throws EventDoesNotExistException {
+        ModelAndView modelAndView = new ModelAndView("event-details");
+        modelAndView.addObject("event", eventService.getEvent(id));
+
+        return modelAndView;
     }
 
     @DeleteMapping("/deleteEvent/{id}")
@@ -87,9 +90,12 @@ public class EventController {
     }
 
     @GetMapping("/getParticipant/{idEvent}/{idParticipant}")
-    public Participant getParticipant(@PathVariable Long idEvent, @PathVariable Long idParticipant)
+    public ModelAndView getParticipant(@PathVariable Long idEvent, @PathVariable Long idParticipant)
             throws EventDoesNotExistException, ParticipantDoesNotExistException {
-        return eventService.getEvent(idEvent).getParticipant(idParticipant);
+        ModelAndView modelAndView = new ModelAndView("participant-details");
+        modelAndView.addObject("participant", eventService.getEvent(idEvent).getParticipant(idParticipant));
+
+        return modelAndView;
     }
 
     @GetMapping("/getAllParticipants/{idEvent}")
