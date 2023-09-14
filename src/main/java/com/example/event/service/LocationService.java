@@ -10,7 +10,7 @@ public interface LocationService {
     public Location addLocation(Location location);
     public void deleteLocation(Long id) throws LocationDoesNotExistException;
     public Location updateLocation(Location location, Long id) throws LocationDoesNotExistException;
-    public Location getLocation(Long id) throws EventLocationException;
+    public Location getLocation(Long id) throws LocationDoesNotExistException;
     public List<Location> getAllLocations();
 
     Boolean checkLocationExists(String locationName);

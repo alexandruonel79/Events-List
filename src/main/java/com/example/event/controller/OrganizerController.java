@@ -7,6 +7,7 @@ import com.example.event.service.OrganizerService;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -40,13 +41,19 @@ public class OrganizerController {
     }
 
     @GetMapping("/getOrganizer/{id}")
-    public Organizer getOrganizer(@PathVariable Long id) throws EventOrganizerException {
-        return organizerService.getOrganizer(id);
+    public ModelAndView getOrganizer(@PathVariable Long id) throws EventOrganizerException {
+        ModelAndView modelAndView = new ModelAndView("organizer-details");
+        modelAndView.addObject("organizer", organizerService.getOrganizer(id));
+
+        return modelAndView;
     }
 
     @GetMapping("/getAllOrganizers")
-    public List<Organizer> getAllOrganizers() {
-        return organizerService.getAllOrganizers();
+    public ModelAndView getAllOrganizers() {
+        ModelAndView modelAndView = new ModelAndView("list-organizers");
+        modelAndView.addObject("organizers", organizerService.getAllOrganizers());
+
+        return modelAndView;
     }
 
 }

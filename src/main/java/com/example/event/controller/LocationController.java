@@ -6,6 +6,7 @@ import com.example.event.error.LocationDoesNotExistException;
 import com.example.event.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -31,9 +32,20 @@ public class LocationController {
         locationService.addLocation(location);
     }
 
+    @GetMapping("/getLocation/{id}")
+    public ModelAndView getLocation(@PathVariable Long id) throws LocationDoesNotExistException {
+        ModelAndView modelAndView = new ModelAndView("location-details");
+        modelAndView.addObject("location", locationService.getLocation(id));
+
+        return modelAndView;
+    }
+
     @GetMapping("/getLocations")
-    public List<Location> getLocations() {
-        return locationService.getAllLocations();
+    public ModelAndView getLocations() {
+        ModelAndView modelAndView = new ModelAndView("list-locations");
+        modelAndView.addObject("locations", locationService.getAllLocations());
+
+        return modelAndView;
     }
 
     @DeleteMapping("/deleteLocation/{id}")

@@ -8,6 +8,7 @@ import com.example.event.request.EventRequest;
 import com.example.event.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class EventController {
 
     @PostMapping("/addEvent")
     public void addEvent(@RequestBody EventRequest eventRequest) throws EventLocationException,
-            EventOrganizerException {
+            EventOrganizerException, LocationDoesNotExistException {
 
         Event event= Event.builder().
                 eventName(eventRequest.getEventName()).
@@ -36,8 +37,13 @@ public class EventController {
     }
 
     @GetMapping("/getAllEvents")
-    public void getAllEvents() {
-        eventService.getAllEvents();
+    public ModelAndView getAllEvents() {
+      List<Event>  eventList=eventService.getAllEvents();
+      /// use thymeleaf to display the list
+        ModelAndView modelAndView = new ModelAndView("list-events");
+        modelAndView.addObject("events", eventList);
+
+        return modelAndView;
     }
 
     @GetMapping("/getEvent/{id}")
@@ -52,7 +58,8 @@ public class EventController {
 
     @PutMapping("/updateEvent/{id}")
     public void updateEvent(@PathVariable Long id, @RequestBody Long locationId, @RequestBody Long organizerId)
-            throws EventLocationException, EventOrganizerException, EventDoesNotExistException {
+            throws EventLocationException, EventOrganizerException, EventDoesNotExistException,
+            LocationDoesNotExistException {
         Event event= eventService.getEvent(id);
         eventService.updateEventLocation(event, locationId);
         eventService.updateEventOrganizer(event, organizerId);

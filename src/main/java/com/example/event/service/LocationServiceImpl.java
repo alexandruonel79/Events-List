@@ -52,10 +52,10 @@ public class LocationServiceImpl implements LocationService{
     }
 
     @Override
-    public Location getLocation(Long id) throws EventLocationException {
+    public Location getLocation(Long id) throws LocationDoesNotExistException {
 
         if(locationRepository.findById(id).isEmpty()){
-            throw new EventLocationException("Location does not exist");
+            throw new LocationDoesNotExistException("Location does not exist");
         }
 
         return locationRepository.findById(id).get();
