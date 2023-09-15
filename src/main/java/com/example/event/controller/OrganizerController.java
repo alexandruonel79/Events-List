@@ -4,7 +4,6 @@ import com.example.event.entity.Organizer;
 import com.example.event.error.EventOrganizerException;
 import com.example.event.error.OrganizerDoesNotExistException;
 import com.example.event.service.OrganizerService;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,9 +20,30 @@ public class OrganizerController {
     }
 
     @PostMapping("/addOrganizer")
-    public void addOrganizer(@RequestBody Organizer organizer) {
+    public ModelAndView addOrganizer( @RequestParam String name,
+                                      @RequestParam String email,
+                                      @RequestParam String phone) {
+
+    Organizer organizer = Organizer.builder().
+            name(name).
+            email(email).
+            phone(phone).
+            build();
+
         organizerService.addOrganizer(organizer);
+
+        ModelAndView modelAndView = new ModelAndView("add-organizer");
+        modelAndView.addObject("organizer", organizer);
+
+        return modelAndView;
     }
+    @GetMapping("/addOrganizer")
+    public ModelAndView showAddOrganizer() {
+        ModelAndView modelAndView = new ModelAndView("add-organizer");
+
+        return modelAndView;
+    }
+
 
     @DeleteMapping("/deleteOrganizer")
     public void deleteOrganizer(@RequestBody Long id) throws OrganizerDoesNotExistException {

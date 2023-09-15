@@ -22,18 +22,25 @@ public class EventController {
     }
 
     @PostMapping("/addEvent")
-    public void addEvent(@RequestBody EventRequest eventRequest) throws EventLocationException,
+    public void addEvent(@RequestParam String name, @RequestParam String description,
+                         @RequestParam String locationId, @RequestParam String organizerId) throws EventLocationException,
             EventOrganizerException, LocationDoesNotExistException {
 
         Event event= Event.builder().
-                eventName(eventRequest.getEventName()).
-                description(eventRequest.getDescription()).
+                eventName(name).
+                description(description).
                 reviews(null).
                 participants(null).
                 organizer(null).
                 build();
 
-        eventService.addEvent(event, eventRequest.getLocationId(), eventRequest.getOrganizerId());
+        eventService.addEvent(event, Long.valueOf(locationId), Long.valueOf(organizerId));
+    }
+    @GetMapping("/addEvent")
+    public ModelAndView showAddEventForm() {
+        ModelAndView modelAndView = new ModelAndView("add-event");
+
+        return modelAndView;
     }
 
     @GetMapping("/getAllEvents")
@@ -70,10 +77,32 @@ public class EventController {
 
     /// Participant
 
+    @GetMapping("/addParticipant/{idEvent}")
+    public ModelAndView showAddParticipantForm(@PathVariable Long idEvent) {
+        // Aici poți inițializa un obiect Participant sau să faci alte pregătiri pentru formular
+        ModelAndView modelAndView = new ModelAndView("add-participant");
+        modelAndView.addObject("idEvent", idEvent);
+        return modelAndView;
+    }
+
     @PostMapping("/addParticipant/{idEvent}")
-    public void addParticipant(@PathVariable Long idEvent, @RequestBody Participant participant)
-            throws EventDoesNotExistException {
+    public ModelAndView addParticipant(
+            @PathVariable Long idEvent,
+            @RequestParam String name,
+            @RequestParam String email,
+            @RequestParam String phone) throws EventDoesNotExistException {
+
+        Participant participant = new Participant();
+        participant.setName(name);
+        participant.setEmail(email);
+        participant.setPhone(phone);
+
         eventService.addParticipant(idEvent, participant);
+
+        ModelAndView modelAndView = new ModelAndView("add-participant");
+        modelAndView.addObject("participant", participant);
+
+        return modelAndView;
     }
 
     @DeleteMapping("/deleteParticipant/{idEvent}/{idParticipant}")

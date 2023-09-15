@@ -35,7 +35,10 @@
     <tbody>
     <tr th:each="location : ${locations}">
       <td th:text="${location.getId()}">Location ID</td>
-      <td th:text="${location.getName()}">Location Name</td>
+      <td>
+        <a th:href="@{/getLocation/{locationId}(locationId=${location.getId()})}"
+           th:text="${location.getName()}">Location Name</a>
+      </td>
       <td th:text="${location.getAddress()}">Location Address</td>
       <td th:text="${location.getCity()}">Location City</td>
       <td th:text="${location.getCountry()}">Location Country</td>
@@ -50,7 +53,14 @@
 </body>
 
 <div class="container text-center fixed-bottom mb-5">
-  <a href="/" class="btn btn-primary">Back to Control Area</a>
+  <a class="btn btn-primary" onclick="goBack()">Back</a>
+    <a class="btn btn-primary" href="/addLocation">Add Location</a>
 </div>
+
+<script>
+  function goBack() {
+    window.history.back();
+  }
+</script>
 
 </html>>

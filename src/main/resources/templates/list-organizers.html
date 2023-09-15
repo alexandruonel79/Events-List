@@ -23,17 +23,20 @@
 
     <thead>
     <tr>
-      <th>Location ID</th>
-      <th>Location Name</th>
-      <th>Location Email</th>
-      <th>Location Phone</th>
+      <th>Organizer ID</th>
+      <th>Organizer Name</th>
+      <th>Organizer Email</th>
+      <th>Organizer Phone</th>
     </tr>
     </thead>
 
     <tbody>
     <tr th:each="organizer : ${organizers}">
       <td th:text="${organizer.getId()}">Organizer ID</td>
-      <td th:text="${organizer.getName()}">Organizer Name</td>
+      <td>
+        <a th:href="@{/getOrganizer/{organizerId}(organizerId=${organizer.getId()})}"
+           th:text="${organizer.getName()}">Organizer Name</a>
+      </td>
       <td th:text="${organizer.getEmail()}">Organizer Email</td>
       <td th:text="${organizer.getPhone()}">Organizer Phone</td>
 
@@ -47,7 +50,14 @@
 </body>
 
 <div class="container text-center fixed-bottom mb-5">
-  <a href="/" class="btn btn-primary">Back to Control Area</a>
+  <a class="btn btn-primary" onclick="goBack()">Back</a>
+    <a class="btn btn-primary" href="/addOrganizer">Add Organizer</a>
 </div>
+
+<script>
+  function goBack() {
+    window.history.back();
+  }
+</script>
 
 </html>>

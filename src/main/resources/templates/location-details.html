@@ -41,7 +41,13 @@
 </body>
 
 <div class="container text-center fixed-bottom mb-5">
-  <a href="/getAllEvents" class="btn btn-primary">Back to Events List</a>
+  <a class="btn btn-primary" onclick="goBack()">Back</a>
 </div>
+
+<script>
+  function goBack() {
+    window.history.back();
+  }
+</script>
 
 </html>

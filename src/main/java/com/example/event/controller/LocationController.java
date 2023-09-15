@@ -28,8 +28,32 @@ public class LocationController {
         }
     }
     @PostMapping("/addLocation")
-    public void addLocation(@RequestBody Location location) {
+    public ModelAndView addLocation(@RequestParam String name,
+                            @RequestParam String address,
+                            @RequestParam String city,
+                            @RequestParam String country,
+                            @RequestParam String postalCode) {
+
+        Location location = Location.builder().
+                name(name).
+                address(address).
+                city(city).
+                country(country).
+                postalCode(postalCode).
+                build();
+
         locationService.addLocation(location);
+
+        ModelAndView modelAndView = new ModelAndView("add-location");
+        modelAndView.addObject("location", location);
+
+        return modelAndView;
+    }
+    @GetMapping("/addLocation")
+    public ModelAndView addLocation() {
+        ModelAndView modelAndView = new ModelAndView("add-location");
+
+        return modelAndView;
     }
 
     @GetMapping("/getLocation/{id}")

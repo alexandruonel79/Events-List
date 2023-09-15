@@ -67,7 +67,16 @@
 </body>
 
 <div class="container text-center fixed-bottom mb-5">
-    <a class="btn btn-primary" href="/getAllEvents">Back to Events List</a>
+    <a class="btn btn-primary" onclick="goBack()">Back</a>
+    <a class="btn btn-primary" th:href="@{/addParticipant/{idEvent}(idEvent=${event.getId()})}">Add
+        Participant</a>
 </div>
+
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
+
 
 </html>
