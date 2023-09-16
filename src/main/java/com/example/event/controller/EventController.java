@@ -125,11 +125,12 @@ public class EventController {
     }
 
     @PostMapping("/addParticipant/{idEvent}")
-    public ModelAndView addParticipant(
+    public void addParticipant(
             @PathVariable Long idEvent,
             @RequestParam String name,
             @RequestParam String email,
-            @RequestParam String phone) throws EventDoesNotExistException {
+            @RequestParam String phone,
+            HttpServletResponse response) throws EventDoesNotExistException {
 
         Participant participant = new Participant();
         participant.setName(name);
@@ -138,10 +139,13 @@ public class EventController {
 
         eventService.addParticipant(idEvent, participant);
 
-        ModelAndView modelAndView = new ModelAndView("add-participant");
-        modelAndView.addObject("participant", participant);
+        String redirectPath = "/getEvent/"+idEvent;
 
-        return modelAndView;
+        try {
+            response.sendRedirect(redirectPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @DeleteMapping("/deleteParticipant/{idEvent}/{idParticipant}")
