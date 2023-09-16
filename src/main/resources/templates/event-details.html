@@ -70,6 +70,8 @@
     <a class="btn btn-primary" onclick="goBack()">Back</a>
     <a class="btn btn-primary" th:href="@{/addParticipant/{idEvent}(idEvent=${event.getId()})}">Add
         Participant</a>
+
+    <a class="btn btn-danger" th:href="@{/deleteEvent/{id}(id=${event.id})}">Delete Event</a>
 </div>
 
 <script>

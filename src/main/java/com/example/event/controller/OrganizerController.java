@@ -4,10 +4,13 @@ import com.example.event.entity.Organizer;
 import com.example.event.error.EventOrganizerException;
 import com.example.event.error.OrganizerDoesNotExistException;
 import com.example.event.service.OrganizerService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,23 +23,28 @@ public class OrganizerController {
     }
 
     @PostMapping("/addOrganizer")
-    public ModelAndView addOrganizer( @RequestParam String name,
-                                      @RequestParam String email,
-                                      @RequestParam String phone) {
+    public void addOrganizer(@RequestParam String name,
+                             @RequestParam String email,
+                             @RequestParam String phone,
+                             HttpServletResponse response) {
 
-    Organizer organizer = Organizer.builder().
-            name(name).
-            email(email).
-            phone(phone).
-            build();
+        Organizer organizer = Organizer.builder().
+                name(name).
+                email(email).
+                phone(phone).
+                build();
 
         organizerService.addOrganizer(organizer);
 
-        ModelAndView modelAndView = new ModelAndView("add-organizer");
-        modelAndView.addObject("organizer", organizer);
+        String redirectPath = "/getAllOrganizers";
 
-        return modelAndView;
+        try {
+            response.sendRedirect(redirectPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
     @GetMapping("/addOrganizer")
     public ModelAndView showAddOrganizer() {
         ModelAndView modelAndView = new ModelAndView("add-organizer");
@@ -45,11 +53,37 @@ public class OrganizerController {
     }
 
 
-    @DeleteMapping("/deleteOrganizer")
-    public void deleteOrganizer(@RequestBody Long id) throws OrganizerDoesNotExistException {
+    @DeleteMapping("/deleteOrganizer/{id}")
+    public void deleteOrganizer(@PathVariable Long id) throws OrganizerDoesNotExistException {
         organizerService.deleteOrganizer(id);
     }
 
+    @GetMapping("/deleteOrganizer/{id}")
+    public void deleteOrganizer(@PathVariable Long id, HttpServletResponse response)
+            throws OrganizerDoesNotExistException, IOException {
+        try {
+            organizerService.deleteOrganizer(id);
+        } catch (DataIntegrityViolationException e) {
+            String errorPath = "/errorDeleteOrganizer";
+            response.sendRedirect(errorPath);
+
+            return;
+        }
+
+        String redirectPath = "/getAllOrganizers";
+
+        try{
+            response.sendRedirect(redirectPath);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+    @GetMapping("/errorDeleteOrganizer")
+    public ModelAndView errorDeleteOrganizer(){
+        ModelAndView modelAndView = new ModelAndView("organizer-delete-error");
+        return modelAndView;
+    }
     @PutMapping("/updateOrganizer/{id}")
     public void updateOrganizer(@RequestBody Organizer organizer, @PathVariable Long id)
             throws EventOrganizerException, OrganizerDoesNotExistException {

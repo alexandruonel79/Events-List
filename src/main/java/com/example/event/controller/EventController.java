@@ -6,10 +6,12 @@ import com.example.event.entity.Review;
 import com.example.event.error.*;
 import com.example.event.request.EventRequest;
 import com.example.event.service.EventService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -23,10 +25,11 @@ public class EventController {
 
     @PostMapping("/addEvent")
     public void addEvent(@RequestParam String name, @RequestParam String description,
-                         @RequestParam String locationId, @RequestParam String organizerId) throws EventLocationException,
+                         @RequestParam String locationId, @RequestParam String organizerId,
+                         HttpServletResponse response) throws EventLocationException,
             EventOrganizerException, LocationDoesNotExistException {
 
-        Event event= Event.builder().
+        Event event = Event.builder().
                 eventName(name).
                 description(description).
                 reviews(null).
@@ -35,7 +38,15 @@ public class EventController {
                 build();
 
         eventService.addEvent(event, Long.valueOf(locationId), Long.valueOf(organizerId));
+
+        String redirectPath = "/getAllEvents";
+        try {
+            response.sendRedirect(redirectPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
     @GetMapping("/addEvent")
     public ModelAndView showAddEventForm() {
         ModelAndView modelAndView = new ModelAndView("add-event");
@@ -64,6 +75,21 @@ public class EventController {
     @DeleteMapping("/deleteEvent/{id}")
     public void deleteEvent(@PathVariable Long id) throws EventDoesNotExistException {
         eventService.deleteEvent(id);
+    }
+
+    @GetMapping("/deleteEvent/{id}")
+    public void deleteEvent(@PathVariable Long id, HttpServletResponse response)
+            throws EventDoesNotExistException {
+        eventService.deleteEvent(id);
+
+        String rutaDorita = "/getAllEvents";
+
+        try {
+            response.sendRedirect(rutaDorita);
+        } catch (IOException e) {
+            // Tratați erorile de redirecționare aici
+            e.printStackTrace();
+        }
     }
 
     @PutMapping("/updateEvent/{id}")

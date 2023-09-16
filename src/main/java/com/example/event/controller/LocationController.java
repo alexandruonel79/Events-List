@@ -4,10 +4,13 @@ import com.example.event.entity.Location;
 import com.example.event.error.EventLocationException;
 import com.example.event.error.LocationDoesNotExistException;
 import com.example.event.service.LocationService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -28,11 +31,12 @@ public class LocationController {
         }
     }
     @PostMapping("/addLocation")
-    public ModelAndView addLocation(@RequestParam String name,
+    public void addLocation(@RequestParam String name,
                             @RequestParam String address,
                             @RequestParam String city,
                             @RequestParam String country,
-                            @RequestParam String postalCode) {
+                            @RequestParam String postalCode,
+                            HttpServletResponse response) {
 
         Location location = Location.builder().
                 name(name).
@@ -44,11 +48,15 @@ public class LocationController {
 
         locationService.addLocation(location);
 
-        ModelAndView modelAndView = new ModelAndView("add-location");
-        modelAndView.addObject("location", location);
+        String redirectPath = "/getLocations";
 
-        return modelAndView;
+        try {
+            response.sendRedirect(redirectPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
     @GetMapping("/addLocation")
     public ModelAndView addLocation() {
         ModelAndView modelAndView = new ModelAndView("add-location");
@@ -76,7 +84,31 @@ public class LocationController {
     public void deleteLocation(@PathVariable Long id) throws LocationDoesNotExistException {
         locationService.deleteLocation(id);
     }
+    @GetMapping("/deleteLocation/{id}")
+    public void deleteLocation(@PathVariable Long id, HttpServletResponse response)
+            throws LocationDoesNotExistException, IOException {
+        try {
+            locationService.deleteLocation(id);
+        } catch (DataIntegrityViolationException e) {
+            String errorPath = "/errorDeleteLocation";
+            response.sendRedirect(errorPath);
 
+            return;
+        }
+
+        String redirectPath = "/getLocations";
+
+        try {
+            response.sendRedirect(redirectPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @GetMapping("/errorDeleteLocation")
+    public ModelAndView errorDeleteLocation(){
+        ModelAndView modelAndView = new ModelAndView("location-delete-error");
+        return modelAndView;
+    }
     @PutMapping("/updateLocation/{id}")
     public void updateLocation(@RequestBody Location location, @PathVariable Long id)
             throws LocationDoesNotExistException {

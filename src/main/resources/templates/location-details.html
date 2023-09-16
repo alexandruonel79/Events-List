@@ -42,6 +42,7 @@
 
 <div class="container text-center fixed-bottom mb-5">
   <a class="btn btn-primary" onclick="goBack()">Back</a>
+  <a class="btn btn-danger" th:href="@{/deleteLocation/{id}(id=${location.id})}">Delete Location</a>
 </div>
 
 <script>

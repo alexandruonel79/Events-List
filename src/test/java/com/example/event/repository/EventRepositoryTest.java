@@ -17,36 +17,36 @@ class EventRepositoryTest {
     @Test
     public void addEvent(){
         Location location = Location.builder()
-                .name("Test Location")
-                .address("Test Address")
-                .city("Test City")
-                .country("Test Country")
-                .postalCode("000000")
+                .name("Test ssssssLocation")
+                .address("Testssssssss Address")
+                .city("Test Csssssssity")
+                .country("Test Cssssountry")
+                .postalCode("11")
                 .build();
 
         Organizer organizer = Organizer.builder()
-                .name("Test Organizer")
-                .email("test@gmail.com")
+                .name("Test Ossssrganizer")
+                .email("test@gmaissl.com")
                 .phone("0000000000")
                 .build();
         Participant participant = Participant.builder()
-                .name("Test Participant")
-                .phone("0000000000")
-                .email("aaa@gmaol.com")
+                .name("Tesddt Participant")
+                .phone("112321")
+                .email("ssss@gmaol.com")
                 ///fix cu ideea lui dailyCodeBuffer
                 .events(null)
                 .build();
 
         Review review = Review.builder()
                 .rating(5)
-                .comment("Test Comment")
+                .comment("dadad")
                 .author(participant)
                 .event(null)
                 .build();
 
         Event event = Event.builder()
-                .eventName("Test Event")
-                .description("Test Description")
+                .eventName("da")
+                .description("da")
                 .location(location)
                 .participants(List.of())
                 .organizer(organizer)
