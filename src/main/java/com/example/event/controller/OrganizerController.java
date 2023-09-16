@@ -95,7 +95,8 @@ public class OrganizerController {
     }
 
     @GetMapping("/getOrganizer/{id}")
-    public ModelAndView getOrganizer(@PathVariable Long id) throws EventOrganizerException {
+    public ModelAndView getOrganizer(@PathVariable Long id)
+            throws EventOrganizerException, OrganizerDoesNotExistException {
         ModelAndView modelAndView = new ModelAndView("organizer-details");
         modelAndView.addObject("organizer", organizerService.getOrganizer(id));
 
@@ -110,4 +111,10 @@ public class OrganizerController {
         return modelAndView;
     }
 
+    @GetMapping("/organizerId-error")
+    public ModelAndView organizerIdError() {
+        ModelAndView modelAndView = new ModelAndView("organizerId-error");
+
+        return modelAndView;
+    }
 }

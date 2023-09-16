@@ -53,11 +53,11 @@ public class OrganizerServiceImpl implements OrganizerService{
     }
 
     @Override
-    public Organizer getOrganizer(Long id) throws EventOrganizerException {
+    public Organizer getOrganizer(Long id) throws OrganizerDoesNotExistException {
 
         if(organizerRepository.findById(id).isEmpty())
         {
-            throw new EventOrganizerException("Organizer does not exist");
+            throw new OrganizerDoesNotExistException("Organizer does not exist");
         }
 
         return organizerRepository.findById(id).get();

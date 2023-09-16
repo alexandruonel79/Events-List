@@ -39,7 +39,7 @@ public class EventServiceImpl implements EventService{
 
     @Override
     public Event addEvent(Event event, Long locationId, Long organizerId) throws EventLocationException,
-            EventOrganizerException, LocationDoesNotExistException {
+            EventOrganizerException, LocationDoesNotExistException, OrganizerDoesNotExistException {
 
         Location location= locationService.getLocation(locationId);
         Organizer organizer= organizerService.getOrganizer(organizerId);
@@ -69,7 +69,8 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public Event updateEventOrganizer(Event event, Long organizerId) throws EventOrganizerException {
+    public Event updateEventOrganizer(Event event, Long organizerId) throws
+            EventOrganizerException, OrganizerDoesNotExistException {
 
         Organizer newOrganizer= organizerService.getOrganizer(organizerId);
         event.setOrganizer(newOrganizer);

@@ -8,10 +8,10 @@ import com.example.event.error.*;
 import java.util.List;
 
 public interface EventService {
-    public Event addEvent(Event event, Long locationId, Long organizerId) throws EventLocationException, EventOrganizerException, LocationDoesNotExistException;
+    public Event addEvent(Event event, Long locationId, Long organizerId) throws EventLocationException, EventOrganizerException, LocationDoesNotExistException, OrganizerDoesNotExistException;
     public void deleteEvent(Long id) throws EventDoesNotExistException;
     public Event updateEventLocation(Event event, Long locationId) throws EventLocationException, LocationDoesNotExistException;
-    public Event updateEventOrganizer(Event event, Long organizerId) throws EventOrganizerException;
+    public Event updateEventOrganizer(Event event, Long organizerId) throws EventOrganizerException, OrganizerDoesNotExistException;
     public Event getEvent(Long id) throws EventDoesNotExistException;
     public List<Event> getAllEvents();
     public void addParticipant(Long idEvent, Participant participant) throws EventDoesNotExistException;

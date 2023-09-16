@@ -115,4 +115,10 @@ public class LocationController {
 
         locationService.updateLocation(location,id);
     }
+
+    @GetMapping("locationId-error")
+    public ModelAndView locationIdError(){
+        ModelAndView modelAndView = new ModelAndView("locationId-error");
+        return modelAndView;
+    }
 }

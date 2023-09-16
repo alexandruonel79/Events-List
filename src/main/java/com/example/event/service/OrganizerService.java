@@ -10,6 +10,6 @@ public interface OrganizerService {
     public Organizer addOrganizer(Organizer organizer);
     public void deleteOrganizer(Long id) throws OrganizerDoesNotExistException;
     public Organizer updateOrganizer(Organizer organizer, Long id) throws OrganizerDoesNotExistException;
-    public Organizer getOrganizer(Long id) throws EventOrganizerException;
+    public Organizer getOrganizer(Long id) throws EventOrganizerException, OrganizerDoesNotExistException;
     public List<Organizer> getAllOrganizers();
 }

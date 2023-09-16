@@ -4,7 +4,6 @@ import com.example.event.entity.Event;
 import com.example.event.entity.Participant;
 import com.example.event.entity.Review;
 import com.example.event.error.*;
-import com.example.event.request.EventRequest;
 import com.example.event.service.EventService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ public class EventController {
     public void addEvent(@RequestParam String name, @RequestParam String description,
                          @RequestParam String locationId, @RequestParam String organizerId,
                          HttpServletResponse response) throws EventLocationException,
-            EventOrganizerException, LocationDoesNotExistException {
+            EventOrganizerException, LocationDoesNotExistException, IOException, OrganizerDoesNotExistException {
 
         Event event = Event.builder().
                 eventName(name).
@@ -37,7 +36,23 @@ public class EventController {
                 organizer(null).
                 build();
 
-        eventService.addEvent(event, Long.valueOf(locationId), Long.valueOf(organizerId));
+        try {
+            eventService.addEvent(event, Long.valueOf(locationId), Long.valueOf(organizerId));
+        } catch (LocationDoesNotExistException |
+                 OrganizerDoesNotExistException e) {
+           if(e instanceof LocationDoesNotExistException) {
+                String redirectPath = "/locationId-error";
+                response.sendRedirect(redirectPath);
+
+                return;
+           }
+           else {
+               String redirectPath = "/organizerId-error";
+               response.sendRedirect(redirectPath);
+
+               return;
+           }
+        }
 
         String redirectPath = "/getAllEvents";
         try {
@@ -56,8 +71,8 @@ public class EventController {
 
     @GetMapping("/getAllEvents")
     public ModelAndView getAllEvents() {
-      List<Event>  eventList=eventService.getAllEvents();
-      /// use thymeleaf to display the list
+        List<Event> eventList = eventService.getAllEvents();
+
         ModelAndView modelAndView = new ModelAndView("list-events");
         modelAndView.addObject("events", eventList);
 
@@ -87,7 +102,6 @@ public class EventController {
         try {
             response.sendRedirect(rutaDorita);
         } catch (IOException e) {
-            // Tratați erorile de redirecționare aici
             e.printStackTrace();
         }
     }
@@ -95,8 +109,8 @@ public class EventController {
     @PutMapping("/updateEvent/{id}")
     public void updateEvent(@PathVariable Long id, @RequestBody Long locationId, @RequestBody Long organizerId)
             throws EventLocationException, EventOrganizerException, EventDoesNotExistException,
-            LocationDoesNotExistException {
-        Event event= eventService.getEvent(id);
+            LocationDoesNotExistException, OrganizerDoesNotExistException {
+        Event event = eventService.getEvent(id);
         eventService.updateEventLocation(event, locationId);
         eventService.updateEventOrganizer(event, organizerId);
     }
@@ -105,7 +119,6 @@ public class EventController {
 
     @GetMapping("/addParticipant/{idEvent}")
     public ModelAndView showAddParticipantForm(@PathVariable Long idEvent) {
-        // Aici poți inițializa un obiect Participant sau să faci alte pregătiri pentru formular
         ModelAndView modelAndView = new ModelAndView("add-participant");
         modelAndView.addObject("idEvent", idEvent);
         return modelAndView;
