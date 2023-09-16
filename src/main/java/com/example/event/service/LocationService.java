@@ -7,11 +7,11 @@ import com.example.event.error.LocationDoesNotExistException;
 import java.util.List;
 
 public interface LocationService {
-    public Location addLocation(Location location);
-    public void deleteLocation(Long id) throws LocationDoesNotExistException;
-    public Location updateLocation(Location location, Long id) throws LocationDoesNotExistException;
-    public Location getLocation(Long id) throws LocationDoesNotExistException;
-    public List<Location> getAllLocations();
+    Location addLocation(Location location);
+    void deleteLocation(Long id) throws LocationDoesNotExistException;
+    Location updateLocation(Location location, Long id) throws LocationDoesNotExistException;
+    Location getLocation(Long id) throws LocationDoesNotExistException;
+    List<Location> getAllLocations();
 
     Boolean checkLocationExists(String locationName);
 }
